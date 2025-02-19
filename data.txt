@@ -1,1 +1,58 @@
 New file Initiated
+
+
+import heapq
+
+class Graph:
+    def __init__(self):
+        self.adj_list = {}
+
+    def add_edge(self, node, neighbor, cost):
+        if node not in self.adj_list:
+            self.adj_list[node] = []
+        if neighbor not in self.adj_list:
+            self.adj_list[neighbor] = []
+        self.adj_list[node].append((neighbor, cost))
+        self.adj_list[neighbor].append((node, cost))  # Assuming an undirected graph
+
+    def best_first_search(self, start, goal, heuristic):
+        priority_queue = []
+        heapq.heappush(priority_queue, (heuristic[start], start))
+        visited = set()
+
+        while priority_queue:
+            _, current_node = heapq.heappop(priority_queue)
+
+            if current_node in visited:
+                continue
+
+            print(current_node, end=" ")  # Print the current path
+            visited.add(current_node)
+
+            if current_node == goal:
+                print("\nGoal reached!")
+                return
+
+            for neighbor, cost in self.adj_list[current_node]:
+                if neighbor not in visited:
+                    heapq.heappush(priority_queue, (heuristic[neighbor], neighbor))
+
+        print("\nGoal not reachable.")
+
+# Example Graph
+graph = Graph()
+graph.add_edge("A", "B", 4)
+graph.add_edge("A", "C", 3)
+graph.add_edge("B", "D", 5)
+graph.add_edge("C", "D", 1)
+graph.add_edge("C", "E", 6)
+graph.add_edge("D", "F", 2)
+graph.add_edge("E", "F", 7)
+
+# Example Heuristic (Lower values are prioritized)
+heuristic = {
+    "A": 7, "B": 6, "C": 2, "D": 1, "E": 12, "F": 0  # F is the goal
+}
+
+# Perform Best-First Search
+graph.best_first_search("A", "F", heuristic)
